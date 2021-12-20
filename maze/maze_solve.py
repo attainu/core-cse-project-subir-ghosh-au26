@@ -121,3 +121,63 @@ pars.add_argument('--s', '--sourece', help='add destination')
 pars.add_argument('--d', '--destination', help='add source')
 arg = pars.parse_args()
 
+
+file = open(arg.ip_file, 'r')
+file1 = open(arg.op_file, 'w')
+# getting input from input.txt
+inArr = []
+
+for data in file:
+    [x.strip('\n') for x in data]
+    inArr.append([int(x) for x in data.split()])
+
+file = open(arg.ip_file, 'r')
+file1 = open(arg.op_file, 'w')
+
+order = len(inArr)
+
+# Adding edges Between the conneted nodes
+
+for i in range(len(inArr)):
+    for j in range(len(inArr[0])):
+        if j-1 >= 0 and inArr[i][j-1] == 1 and inArr[i][j] == 1:
+            g.add_edge((i, j-1), (i, j))
+        if i-1 >= 0 and inArr[i-1][j] == 1 and inArr[i][j] == 1:
+            g.add_edge((i-1, j), (i, j))
+
+a = arg.s
+b = arg.d
+if a is None:
+    a = (0, 0)
+else:
+    a = tuple(map(int, a.split(',')))
+if b is None:
+    b = (len(inArr)-1, len(inArr[0])-1)
+else:
+    b = tuple(map(int, b.split(',')))
+
+
+temp_list = g.src_to_dest(a, b)
+
+output_list = [[0 for i in range(len(inArr[0]))] for j in range(len(inArr))]
+
+# Representing the set output obtained from source to destination function
+# In matrix form
+
+if temp_list == -1:
+    output = -1
+    file1.write(f' {int(output)} ')
+else:
+    if type(temp_list) is set:
+
+        for i in range(len(inArr)):
+            for j in range(len(inArr[0])):
+                if (i, j) in temp_list:
+                    output_list[i][j] = int(1)
+                else:
+                    output_list[i][j] = int(0)
+
+        for i in output_list:
+            for j in i:
+                file1.write(f' {str(j)} ')
+            file1.write('\n')
